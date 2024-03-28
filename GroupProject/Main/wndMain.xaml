@@ -3,10 +3,80 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         xmlns:local="clr-namespace:GroupProject"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
-    <Grid>
+    <Grid Margin="0,0,0,-6">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="*" />
+
+        </Grid.RowDefinitions>
+        
+        <Menu Background="LightGray" Grid.Row="0" Padding="5" FontWeight="Bold">
+            <MenuItem Header="_Invoice Options">
+                <MenuItem Header="_New"/>
+                <MenuItem Header="_Edit" />
+                <MenuItem Header="_Search" Click="OpenSearchWindow"/>
+                <MenuItem Header="_Display Items" />
+            </MenuItem>
+        </Menu>
+        <GroupBox Name="grdNewInvoice" Grid.Row="1" Header="New Invoice" Visibility="Collapsed">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                
+                <!--data table that shows what's added to the invoice-->
+                <ScrollViewer Grid.Row="0" Grid.ColumnSpan="5">
+                    <DataGrid  d:ItemsSource="{d:SampleData ItemCount=5}"/>
+                </ScrollViewer>
+                    
+                <Label Content="Invoice Number" Grid.Row="1" Grid.Column="0" />
+                <Label Content="Item Selection" Grid.Row="1" Grid.Column="1" />
+                <Label Content="Item Cost" Grid.Row="1" Grid.Column="2" />
+                <Label Content="Item Quantity" Grid.Row="1" Grid.Column="3" />
+
+                <TextBox Name="tbxItemNumber" Grid.Row="2" Grid.Column="0" Text="TBD" IsReadOnly="True" IsEnabled="False" />
+                <ComboBox Name="cboItemSelection" Grid.Row="2" Grid.Column="1" >True
+                    
+                </ComboBox>
+                <TextBox Name="tbxItemcost" Grid.Row="2" Grid.Column="2" Text="ItemCost" IsReadOnly="True" IsEnabled="False" />
+                <xctk:IntegerUpDown Name="iudItemQuantity" Grid.Row="2" Grid.Column="3" />
+                <Button Name="btnAddLineItem" Content="Add Item" IsDefault="True" Grid.Row="2" Grid.Column="4" />
+
+                <Button Name="btnSubmitInvoice" Margin="0,10,0,0" Grid.Row="3" Grid.Column="4" Content="Submit Invoice" />
+            </Grid>
+            
+            
+            <!--Spitballing:
+            The options should allow the user to select:
+            date
+            item - read only cost displayed next to item in textbox
+            quantity
+            -->
+        </GroupBox>
+        
+        
+
+        <StackPanel Orientation="Horizontal" Grid.Row="3" VerticalAlignment="Bottom" >
+            <Button Name="btnNewInvoice" Content="New Invoice" Padding="5" Margin="10" FontSize="16" Click="btnNewInvoice_Click"/>
+            <Button Name="btnEditInvoice" Content="Edit Invoice" IsEnabled="False" Padding="5" Margin="10" FontSize="16"/>
+
+        </StackPanel>
 
     </Grid>
 </Window>
