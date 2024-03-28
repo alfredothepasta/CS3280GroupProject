@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GroupProject.Controller;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,8 +20,10 @@ namespace GroupProject.Items
     /// </summary>
     public partial class wndItems : Window
     {
-        public wndItems()
+        ApplicationController _controller;
+        public wndItems(ApplicationController controller)
         {
+            _controller = controller;
             InitializeComponent();
         }
     }
