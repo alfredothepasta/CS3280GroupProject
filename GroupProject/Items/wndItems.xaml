@@ -7,6 +7,23 @@
         mc:Ignorable="d"
         Title="wndItems" Height="450" Width="800">
     <Grid>
-        
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="39*"/>
+            <ColumnDefinition Width="61*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="307*"/>
+            <RowDefinition Height="127*"/>
+        </Grid.RowDefinitions>
+        <Label x:Name="lblCode" Content="Code:" HorizontalAlignment="Left" Margin="39,57,0,0" VerticalAlignment="Top" FontSize="18"/>
+        <Label x:Name="lblCost" Content="Cost:" HorizontalAlignment="Left" Margin="39,113,0,0" VerticalAlignment="Top" FontSize="18"/>
+        <Label x:Name="lblDescription" Content="Description:" HorizontalAlignment="Left" Margin="39,154,0,0" VerticalAlignment="Top" FontSize="18"/>
+        <Button x:Name="cmdAddItem" Content="Add Item" HorizontalAlignment="Left" Margin="20,27,0,0" Grid.Row="1" VerticalAlignment="Top" Click="cmdAddItem_Click"/>
+        <Button x:Name="cmdEditItem" Content="Edit Item" HorizontalAlignment="Left" Margin="115,27,0,0" Grid.Row="1" VerticalAlignment="Top" Click="cmdEditItem_Click"/>
+        <Button x:Name="cmdDeleteItem" Content="Delete Item" HorizontalAlignment="Left" Margin="216,27,0,0" Grid.Row="1" VerticalAlignment="Top" Click="cmdDeleteItem_Click"/>
+        <DataGrid Grid.Column="1" d:ItemsSource="{d:SampleData ItemCount=5}"/>
+        <Button x:Name="cmdSaveItem" Content="Save Item" HorizontalAlignment="Left" Margin="115,64,0,0" Grid.Row="1" VerticalAlignment="Top" Click="cmdSaveItem_Click"/>
+
+
     </Grid>
 </Window>
