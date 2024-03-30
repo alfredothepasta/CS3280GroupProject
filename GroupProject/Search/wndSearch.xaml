@@ -7,6 +7,12 @@
         mc:Ignorable="d"
         Title="wndSearch" Height="450" Width="800">
     <Grid>
-        
+        <ComboBox x:Name="boxSelectA" HorizontalAlignment="Left" Margin="82,81,0,0" VerticalAlignment="Top" Width="120"/>
+        <ComboBox x:Name="boxSelectB" HorizontalAlignment="Left" Margin="82,195,0,0" VerticalAlignment="Top" Width="120"/>
+        <ComboBox x:Name="boxSelectC" HorizontalAlignment="Left" Margin="82,289,0,0" VerticalAlignment="Top" Width="120"/>
+        <DataGrid x:Name="dataSearchGrid" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="235,81,109,123" SelectionChanged="DataGrid_SelectionChanged"/>
+        <Button x:Name="btnSelect" Content="Select&#xD;&#xA;" HorizontalAlignment="Left" Margin="254,327,0,0" VerticalAlignment="Top" RenderTransformOrigin="2.881,0.963" Height="21" Width="84" Click="Select_Click"/>
+        <Button x:Name="btnCancel" Content="Cancel&#xD;&#xA;" HorizontalAlignment="Left" Margin="588,327,0,0" VerticalAlignment="Top" Height="21" Width="87" Click="Cancel_Click"/>
+
     </Grid>
 </Window>

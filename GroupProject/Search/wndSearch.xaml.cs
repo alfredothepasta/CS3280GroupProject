@@ -23,5 +23,15 @@ namespace GroupProject.Search
         {
             InitializeComponent();
         }
+
+        private void Select_Click(object sender, RoutedEventArgs e)
+        {
+            //Item is selected, window closes, main menu focus. 
+        }
+
+        private void Cancel_Click(object sender, RoutedEventArgs e)
+        {
+            //Item is not selected, search window closes, main menu focus. 
+        }
     }
 }
