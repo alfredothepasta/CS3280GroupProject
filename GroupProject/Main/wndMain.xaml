@@ -21,10 +21,10 @@
                 <MenuItem Header="_New"/>
                 <MenuItem Header="_Edit" />
                 <MenuItem Header="_Search" Click="OpenSearchWindow"/>
-                <MenuItem Header="_Display Items" />
+                <MenuItem Header="_Edit Items" Click="OpenEditWindow" />
             </MenuItem>
         </Menu>
-        <GroupBox Name="grdNewInvoice" Grid.Row="1" Header="New Invoice" Visibility="Collapsed">
+        <GroupBox Name="grdNewInvoice" Grid.Row="1" Header="New Invoice">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="auto" />

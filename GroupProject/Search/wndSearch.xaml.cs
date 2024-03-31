@@ -33,5 +33,10 @@ namespace GroupProject.Search
         {
             //Item is not selected, search window closes, main menu focus. 
         }
+
+        private void DataGrid_SelectionChanged(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }
