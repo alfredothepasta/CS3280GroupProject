@@ -79,6 +79,8 @@ namespace GroupProject
                 wndItems itemsWindow = new wndItems(_controller);
 
                 itemsWindow.ShowDialog();
+
+                // after this dialog is closed, will just call the method that will populate the items box
                 #endregion
             }
             #region Top Level Catch Block

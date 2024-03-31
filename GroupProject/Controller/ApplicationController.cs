@@ -10,6 +10,7 @@ namespace GroupProject.Controller
     {
         // Class that contains data to be passed between windows
         // Contains logic that requires interaction from multiple windows
+        // Contains the current list of items
 
     }
 }
