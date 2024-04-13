@@ -18,15 +18,17 @@
         
         <Menu Background="LightGray" Grid.Row="0" Padding="5" FontWeight="Bold">
             <MenuItem Header="_Invoice Options">
-                <MenuItem Header="_New"/>
+                <MenuItem Header="_New" Click="btnNewInvoice_Click"/>
                 <MenuItem Header="_Edit" />
                 <MenuItem Header="_Search" Click="OpenSearchWindow"/>
                 <MenuItem Header="_Edit Items" Click="OpenEditWindow" />
             </MenuItem>
         </Menu>
-        <GroupBox Name="grdNewInvoice" Grid.Row="1" Header="New Invoice">
+        <GroupBox Name="grdNewInvoice" Grid.Row="1" Header="New Invoice" >
             <Grid>
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
                     <RowDefinition Height="auto" />
                     <RowDefinition Height="auto" />
                     <RowDefinition Height="auto" />
@@ -38,30 +40,47 @@
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
+
                 </Grid.ColumnDefinitions>
-                
+
                 <!--data table that shows what's added to the invoice-->
                 <ScrollViewer Grid.Row="0" Grid.ColumnSpan="5">
-                    <DataGrid  d:ItemsSource="{d:SampleData ItemCount=5}"/>
+                    <DataGrid Name="dgrdInvoiceItems" ItemsSource="{Binding Data}" AutoGenerateColumns="False" IsReadOnly="True" SelectionChanged="dgrdInvoiceItems_SelectionChanged">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Item Name" Width="*" Binding="{Binding ItemName}" IsReadOnly="True"/>
+                            <DataGridTextColumn Header="Item Cost" Width="*" Binding="{Binding ItemCost, StringFormat=C}" IsReadOnly="True"/>
+                            <DataGridTextColumn Header="Quantity" Width="*" Binding="{Binding Quantity}" IsReadOnly="True"/>
+                            <DataGridTextColumn Header="Total Cost" Width="*" Binding="{Binding TotalCost, StringFormat=C}" IsReadOnly="True"/>
+                        </DataGrid.Columns>
+
+                    </DataGrid>
+
                 </ScrollViewer>
-                    
-                <Label Content="Invoice Number" Grid.Row="1" Grid.Column="0" />
-                <Label Content="Item Selection" Grid.Row="1" Grid.Column="1" />
-                <Label Content="Item Cost" Grid.Row="1" Grid.Column="2" />
-                <Label Content="Item Quantity" Grid.Row="1" Grid.Column="3" />
 
-                <TextBox Name="tbxItemNumber" Grid.Row="2" Grid.Column="0" Text="TBD" IsReadOnly="True" IsEnabled="False" />
-                <ComboBox Name="cboItemSelection" Grid.Row="2" Grid.Column="1" >True
-                    
-                </ComboBox>
-                <TextBox Name="tbxItemcost" Grid.Row="2" Grid.Column="2" Text="ItemCost" IsReadOnly="True" IsEnabled="False" />
-                <xctk:IntegerUpDown Name="iudItemQuantity" Grid.Row="2" Grid.Column="3" />
-                <Button Name="btnAddLineItem" Content="Add Item" IsDefault="True" Grid.Row="2" Grid.Column="4" />
+                <Button Grid.Row="1" Grid.Column="3" Name="btnEditRow" Content="Edit Row" Margin="2" Click="btnEditRow_Click" />
+                <Button Grid.Row="1" Grid.Column="4" Name="btnDeleteRow" Content="Delete Row" Margin="2" Click="btnDeleteRow_Click"  />
 
-                <Button Name="btnSubmitInvoice" Margin="0,10,0,0" Grid.Row="3" Grid.Column="4" Content="Submit Invoice" />
+                <Label Content="Invoice Number" Grid.Row="2" Grid.Column="0" />
+                <Label Content="Item Selection" Grid.Row="2" Grid.Column="1" />
+                <Label Content="Item Cost" Grid.Row="2" Grid.Column="2" />
+                <Label Content="Item Quantity" Grid.Row="2" Grid.Column="3" />
+                
+
+                <TextBox Name="tbxInvoiceNumber" Grid.Row="3" Grid.Column="0" Text="TBD" IsReadOnly="True" IsEnabled="False" />
+                <ComboBox Name="cboItemSelection" Grid.Row="3" Grid.Column="1" SelectionChanged="cboItemSelection_SelectionChanged" ItemsSource="{Binding Items}" />
+                <TextBox Name="tbxItemcost" Grid.Row="3" Grid.Column="2" Text="ItemCost" IsReadOnly="True" IsEnabled="False" />
+                <xctk:IntegerUpDown Name="iudItemQuantity" Grid.Row="3" Grid.Column="3" Minimum="1" Value="1"/>
+                <Button Name="btnAddLineItem" Content="Add Item" IsDefault="True" Grid.Row="3" Grid.Column="4" Margin="2" Click="btnAddLineItem_Click" IsEnabled="False" />
+
+                <DatePicker Name="dpDateSelection" Margin="0,5,0,0" Grid.Row="4" Grid.Column="0"></DatePicker>
+                <Label Content="Grand Total:" Grid.Row="4" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right" />
+                <Label Name="lblTotal" Content="{Binding TotalCost}" Grid.Row="4" Grid.Column="3" VerticalAlignment="Center" ContentStringFormat="C" />
+                <Button Name="btnSubmitInvoice" Margin="2" Grid.Row="4" Grid.Column="4" Content="Submit Invoice" VerticalAlignment="Top" Click="btnSubmitInvoice_Click" />
+
+                <Label Foreground="Red" Visibility="Collapsed" Grid.Row="5" Content="" Name="lblSubmitError"/>
             </Grid>
-            
-            
+
+
             <!--Spitballing:
             The options should allow the user to select:
             date
@@ -69,13 +88,10 @@
             quantity
             -->
         </GroupBox>
-        
-        
 
         <StackPanel Orientation="Horizontal" Grid.Row="3" VerticalAlignment="Bottom" >
             <Button Name="btnNewInvoice" Content="New Invoice" Padding="5" Margin="10" FontSize="16" Click="btnNewInvoice_Click"/>
-            <Button Name="btnEditInvoice" Content="Edit Invoice" IsEnabled="False" Padding="5" Margin="10" FontSize="16"/>
-
+            <Button Name="btnEditInvoice" Content="Edit Invoice" IsEnabled="False" Padding="5" Margin="10" FontSize="16" Click="btnEditInvoice_Click"/>
         </StackPanel>
 
     </Grid>

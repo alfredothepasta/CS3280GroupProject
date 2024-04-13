@@ -1,8 +1,13 @@
 ﻿using GroupProject.Controller;
+using GroupProject.DataObjects;
+using GroupProject.Enum;
 using GroupProject.Items;
 using GroupProject.Main;
 using GroupProject.Search;
+using System.ComponentModel.DataAnnotations;
+using System.Diagnostics;
 using System.Reflection;
+using System.Security.Cryptography;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -16,18 +21,13 @@ using System.Windows.Shapes;
 
 namespace GroupProject
 {
-    
-    
-    
-    
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window
     {
-        /********How I envision this working*************
-         * 
-         ************************************************/
+
+        #region Params
 
         /// <summary>
         /// Holds logic for this window
@@ -38,17 +38,251 @@ namespace GroupProject
         /// </summary>
         private ApplicationController _controller;
 
+        private MainViewModel _mainViewModel;
+
+        #endregion
+
+        #region constructor
         public MainWindow()
         {
             InitializeComponent();
+            _logic = new clsMainLogic();
+            _controller = new ApplicationController();
+            
+            _mainViewModel = new MainViewModel();
+            _mainViewModel.Items = _logic.getItemList();
+            _mainViewModel.Data = new List<DataDisplayItem>();
+            
+            this.DataContext = _mainViewModel;
         }
+        #endregion
 
-        private void UpdateDataGrid()
+        #region Combo Boxes
+        private void buildCboItemSelection()
         {
-            // this should be called after the search dialogue is closed
-            // it will get the invoice and then populate the data grid
+            try
+            {
+                List<Item> items = _logic.getItemList();
+                cboItemSelection.ItemsSource = items;
+            }
+            #region Default Catch Block
+            catch (Exception ex)
+            {
+                throw new Exception(MethodInfo.GetCurrentMethod().DeclaringType.Name +
+                    "." +
+                    MethodInfo.GetCurrentMethod().Name +
+                    " -> " +
+                    ex.Message);
+            }
+            #endregion
         }
 
+        private void cboItemSelection_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            try
+            {
+
+                Item currentItem = cboItemSelection.SelectedItem as Item;
+                if (currentItem != null)
+                {
+                    //if an item is selected, enable the add to invoice button
+                    btnAddLineItem.IsEnabled = true;
+                    tbxItemcost.Text = $"${currentItem.Cost.ToString()}";
+                }
+                else
+                {
+                    // reset our buttons
+                    iudItemQuantity.Value = 1;
+                    btnAddLineItem.IsEnabled = false;
+                }
+
+            }
+            #region Default Catch Block
+            catch (Exception ex)
+            {
+                throw new Exception(MethodInfo.GetCurrentMethod().DeclaringType.Name +
+                    "." +
+                    MethodInfo.GetCurrentMethod().Name +
+                    " -> " +
+                    ex.Message);
+            }
+            #endregion
+        }
+        #endregion
+
+        #region Data Grid
+
+        /// <summary>
+        /// For editing line items
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void dgrdInvoiceItems_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            
+        }
+
+        #endregion
+
+        #region Button Clicks
+        private void btnNewInvoice_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                #region Method Code
+                switch (_controller.AppState)
+                {
+                    case ApplicationState.Default:
+                        break;
+                    case ApplicationState.CreatingNewInvoice:
+                        if (checkIfUnsaved())
+                        {
+                            clearCurrentInvoice();
+                        };
+                        break;
+                    case ApplicationState.InvoiceCreated:
+                        clearCurrentInvoice();
+                        grdNewInvoice.IsEnabled = true;
+                        break;
+                    default:
+                        throw new Exception("We are in a state that shouldn't allow this");
+                }
+
+                // create a new invoice object
+                _controller.UpdateAppState(ApplicationState.CreatingNewInvoice);
+                grdNewInvoice.Visibility = Visibility.Visible;
+
+
+                #endregion
+            }
+            #region Top Level Catch Block
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Application Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            #endregion
+        }
+
+        private void btnAddLineItem_Click(object sender, RoutedEventArgs e)
+        {
+            switch (_controller.AppState)
+            {
+                case ApplicationState.EditingRow:
+                    // todo : stuff
+                    EditGridItem();
+                    _controller.RevertState();
+                    applicationStateChange();
+                    break;
+                case ApplicationState.CreatingNewInvoice:
+                case ApplicationState.EditingInvoice:
+                    AddItemToGrid();
+                    break;
+                default: throw new Exception("How did we get here?");
+
+            }
+            
+
+        }
+
+        
+
+        private void btnSubmitInvoice_Click(object sender, RoutedEventArgs e)
+        {
+            if (dpDateSelection.SelectedDate == null)
+            {
+                lblSubmitError.Content = "Please select a date.";
+                lblSubmitError.Visibility = Visibility.Visible;
+                return;
+            }
+
+            if (_mainViewModel.Data.Count == 0)
+            {
+                lblSubmitError.Content = "No items to add to invoice.";
+                lblSubmitError.Visibility = Visibility.Visible;
+                return;
+            }
+
+            _controller.CurrentInvoiceId = _logic.createNewInvoice(dpDateSelection.SelectedDate, _mainViewModel.TotalCost, _mainViewModel.Data);
+
+            tbxInvoiceNumber.Text = _controller.CurrentInvoiceId.ToString();
+
+            _controller.UpdateAppState(ApplicationState.InvoiceCreated);
+            applicationStateChange();
+
+            lblSubmitError.Visibility = Visibility.Collapsed;
+        }
+
+        /// <summary>
+        /// Handles how the button click for the edit invoice works. 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void btnEditInvoice_Click(object sender, RoutedEventArgs e)
+        {
+            if (_controller.AppState == ApplicationState.InvoiceCreated)
+            {
+
+            }
+        }
+
+        private void btnEditRow_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                
+                int dataIndex = dgrdInvoiceItems.SelectedIndex;
+                DataDisplayItem data; 
+                try
+                {
+                    data = _mainViewModel.Data[dataIndex];
+                } catch
+                {
+                    throw new Exception("A valid line item must be selected.");
+                }
+
+                cboItemSelection.Text = data.ItemName;
+                iudItemQuantity.Value = data.Quantity;
+
+                _controller.UpdateAppState(ApplicationState.EditingRow);
+                applicationStateChange();
+            }
+            #region Top Level Catch Block
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Application Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            #endregion
+
+        }
+
+        private void btnDeleteRow_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                int dataIndex = dgrdInvoiceItems.SelectedIndex;
+                try
+                {
+                    _mainViewModel.Data.RemoveAt(dataIndex);
+                    applicationStateChange();
+
+                    dgrdInvoiceItems.Items.Refresh();
+                }
+                catch
+                {
+                    throw new Exception("A valid line item must be selected.");
+                }
+            }
+            #region Top Level Catch Block
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Application Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            #endregion
+        }
+
+        #endregion
+
+        #region Open Windows
         private void OpenSearchWindow(object sender, RoutedEventArgs e)
         {
             try
@@ -79,6 +313,8 @@ namespace GroupProject
                 wndItems itemsWindow = new wndItems(_controller);
 
                 itemsWindow.ShowDialog();
+
+                // after this dialog is closed, will just call the method that will populate the items box
                 #endregion
             }
             #region Top Level Catch Block
@@ -89,24 +325,96 @@ namespace GroupProject
             #endregion
         }
 
-        private void btnNewInvoice_Click(object sender, RoutedEventArgs e)
+        #endregion
+
+        #region Helper Methods
+        private bool checkIfUnsaved()
         {
-            try
+            // todo : create dialog asking user if they want to clear any unsaved changes
+            if(_controller.CurrentInvoiceId == null)
             {
-                #region Method Code
-                // create a new invoice object
-
-                grdNewInvoice.Visibility = Visibility.Visible;
-
-
-                #endregion
+                return false;
             }
-            #region Top Level Catch Block
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message, "Application Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-            #endregion
+            return true;
         }
+
+        private void clearCurrentInvoice()
+        {
+            _controller = new ApplicationController();
+            tbxInvoiceNumber.Text = string.Empty;
+            dpDateSelection.Text = string.Empty;
+            _mainViewModel.Data.Clear();
+            dgrdInvoiceItems.Items.Refresh();
+        }
+
+        /// <summary>
+        /// Handles how the buttons should be displayed if the application state changes
+        /// </summary>
+        private void applicationStateChange()
+        {
+            switch (_controller.AppState)
+            {
+                case ApplicationState.InvoiceCreated:
+                    grdNewInvoice.IsEnabled = false;
+                    btnEditInvoice.IsEnabled = true;
+                    break;
+                case ApplicationState.CreatingNewInvoice:
+                    btnEditInvoice.IsEnabled = false;
+                    btnAddLineItem.Content = "Add Item";
+                    break;
+                case ApplicationState.EditingInvoice:
+                    grdNewInvoice.IsEnabled = true;
+                    btnEditInvoice.IsEnabled = false;
+                    btnAddLineItem.Content = "Add Item";
+                    break;
+                case ApplicationState.EditingRow:
+                    btnAddLineItem.Content = "Save Row";
+                    break;
+            }
+        }
+
+        private void AddItemToGrid()
+        {
+            Item currentItem = (Item)cboItemSelection.SelectedItem;
+
+            DataDisplayItem displayItem = new DataDisplayItem()
+            {
+                ItemCode = currentItem.ItemCode,
+                ItemName = currentItem.ItemDesc,
+                Quantity = iudItemQuantity.Value,
+                ItemCost = currentItem.Cost,
+                TotalCost = (decimal)iudItemQuantity.Value * currentItem.Cost,
+            };
+            _mainViewModel.Data.Add(displayItem);
+            FinalizeGridChanges();
+
+            
+        }
+
+        private void FinalizeGridChanges()
+        {
+            _mainViewModel.TotalCost = _mainViewModel.Data.Sum(x => x.TotalCost);
+            cboItemSelection.Text = "";
+
+            dgrdInvoiceItems.Items.Refresh();
+            lblTotal.Content = _mainViewModel.TotalCost;
+        }
+
+        private void EditGridItem()
+        {
+            Item currentItem = (Item)cboItemSelection.SelectedItem;
+            int dataIndex = dgrdInvoiceItems.SelectedIndex;
+            DataDisplayItem gridRow = _mainViewModel.Data[dataIndex];
+            gridRow.ItemCode = currentItem.ItemCode;
+            gridRow.ItemName = currentItem.ItemDesc;
+            gridRow.ItemCost = currentItem.Cost;
+            gridRow.Quantity = iudItemQuantity.Value;
+            gridRow.TotalCost = (decimal)iudItemQuantity.Value * currentItem.Cost;
+
+            FinalizeGridChanges();
+        }
+
+        #endregion
+
     }
 }

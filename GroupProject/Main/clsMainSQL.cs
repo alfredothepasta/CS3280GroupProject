@@ -6,10 +6,11 @@ using System.Threading.Tasks;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using Xceed.Wpf.AvalonDock.Themes;
 using System.Reflection;
+using GroupProject.DataObjects;
 
 namespace GroupProject.Main
 {
-    internal class clsMainSQL
+    internal class ClsMainSQL
     {
 
         public static string UpdateInvoices(int invoiceTotal, int invoiceId)
@@ -32,12 +33,12 @@ namespace GroupProject.Main
             #endregion
         }
 
-        public static string AddLineItem(int invoiceNum, int lineItemNum, string itemCode)
+        public static string AddLineItem(LineItem lineItem)
         {
             try
             {
                 #region Method Code
-                return $"INSERT INTO LineItems(InvoiceNum, LineItemNum, ItemCode) Values({invoiceNum}, {lineItemNum}, '{itemCode}')";
+                return $"INSERT INTO LineItems(InvoiceNum, LineItemNum, ItemCode, Quantity) Values({lineItem.InvoiceNum}, {lineItem.LineItemNum}, '{lineItem.ItemCode}', {lineItem.Quantity})";
                 #endregion
             }
             #region Default Catch Block
@@ -52,12 +53,12 @@ namespace GroupProject.Main
             #endregion
         }
 
-        public static string AddInvoice(DateTime date, int totalCost)
+        public static string AddInvoice(Invoice invoice)
         {
             try
             {
                 #region Method Code
-                return $"INSERT INTO Invoices(InvoiceDate, TotalCost) Values(#{date.ToShortDateString()}#, {totalCost})";
+                return $"INSERT INTO Invoices(InvoiceDate, TotalCost) Values(#{invoice.InvoiceDate.ToShortDateString()}#, {invoice.TotalCost})";
                 #endregion
             }
             #region Default Catch Block
@@ -141,6 +142,26 @@ namespace GroupProject.Main
             {
                 #region Method Code
                 return $"DELETE FROM LineItems WHERE InvoiceNum = {invoiceId}";
+                #endregion
+            }
+            #region Default Catch Block
+            catch (Exception ex)
+            {
+                throw new Exception(MethodInfo.GetCurrentMethod().DeclaringType.Name +
+                    "." +
+                    MethodInfo.GetCurrentMethod().Name +
+                    " -> " +
+                    ex.Message);
+            }
+            #endregion
+        }
+
+        public static string GetLatestInvoice()
+        {
+            try
+            {
+                #region Method Code
+                return $"SELECT TOP 1 InvoiceNum FROM Invoices ORDER BY InvoiceNum DESC";
                 #endregion
             }
             #region Default Catch Block
