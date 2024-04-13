@@ -12,6 +12,7 @@ namespace GroupProject.Enum
         CreatingNewInvoice,
         InvoiceCreated,
         EditingInvoice,
+        EditingRow,
         SearchingInvoice,
         EditingItemList
     }

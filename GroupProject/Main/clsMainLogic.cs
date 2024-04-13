@@ -86,9 +86,9 @@ namespace GroupProject.Main
                 {
                     invoiceNum = Int32.Parse(ds);
                 }
-                catch
+                catch(Exception e)
                 {
-                    throw new Exception("Something went wrong.");
+                    throw new Exception(e.Message);
                 }
 
                 List<LineItem> items = new List<LineItem>();

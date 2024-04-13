@@ -17,7 +17,7 @@ namespace GroupProject.DataObjects
 
         public override string ToString()
         {
-            return $"{ItemCode}: {ItemDesc}";
+            return $"{ItemDesc}";
         }
     }
 }

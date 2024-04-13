@@ -16,5 +16,7 @@ namespace GroupProject.Controller
 
         public ApplicationState AppState;
 
+        public ApplicationState PreviousState { get; set; }
+
     }
 }
