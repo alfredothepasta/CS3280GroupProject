@@ -149,7 +149,7 @@ namespace GroupProject
                 }
 
                 // create a new invoice object
-                _controller.AppState = ApplicationState.CreatingNewInvoice;
+                _controller.UpdateAppState(ApplicationState.CreatingNewInvoice);
                 grdNewInvoice.Visibility = Visibility.Visible;
 
 
@@ -170,6 +170,8 @@ namespace GroupProject
                 case ApplicationState.EditingRow:
                     // todo : stuff
                     EditGridItem();
+                    _controller.RevertState();
+                    applicationStateChange();
                     break;
                 case ApplicationState.CreatingNewInvoice:
                 case ApplicationState.EditingInvoice:
@@ -204,7 +206,7 @@ namespace GroupProject
 
             tbxInvoiceNumber.Text = _controller.CurrentInvoiceId.ToString();
 
-            _controller.AppState = ApplicationState.InvoiceCreated;
+            _controller.UpdateAppState(ApplicationState.InvoiceCreated);
             applicationStateChange();
 
             lblSubmitError.Visibility = Visibility.Collapsed;
@@ -225,13 +227,32 @@ namespace GroupProject
 
         private void btnEditRow_Click(object sender, RoutedEventArgs e)
         {
-            int dataIndex = dgrdInvoiceItems.SelectedIndex;
-            DataDisplayItem data = _mainViewModel.Data[dataIndex];
-            _controller.AppState = ApplicationState.EditingRow;
-            applicationStateChange();
+            try
+            {
+                
+                int dataIndex = dgrdInvoiceItems.SelectedIndex;
+                DataDisplayItem data; 
+                try
+                {
+                    data = _mainViewModel.Data[dataIndex];
+                } catch
+                {
+                    throw new Exception("A valid line item must be selected.");
+                }
 
-            cboItemSelection.Text = data.ItemName;
-            iudItemQuantity.Value = data.Quantity;
+                cboItemSelection.Text = data.ItemName;
+                iudItemQuantity.Value = data.Quantity;
+
+                _controller.UpdateAppState(ApplicationState.EditingRow);
+                applicationStateChange();
+            }
+            #region Top Level Catch Block
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Application Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            #endregion
+
         }
 
         private void btnDeleteRow_Click(object sender, RoutedEventArgs e)
@@ -239,20 +260,22 @@ namespace GroupProject
             try
             {
                 int dataIndex = dgrdInvoiceItems.SelectedIndex;
-                _mainViewModel.Data.RemoveAt(dataIndex);
-                _controller.AppState = ApplicationState.EditingRow;
-                applicationStateChange();
+                try
+                {
+                    _mainViewModel.Data.RemoveAt(dataIndex);
+                    applicationStateChange();
 
-                dgrdInvoiceItems.Items.Refresh();
+                    dgrdInvoiceItems.Items.Refresh();
+                }
+                catch
+                {
+                    throw new Exception("A valid line item must be selected.");
+                }
             }
-            #region Default Catch Block
+            #region Top Level Catch Block
             catch (Exception ex)
             {
-                throw new Exception(MethodInfo.GetCurrentMethod().DeclaringType.Name +
-                    "." +
-                    MethodInfo.GetCurrentMethod().Name +
-                    " -> " +
-                    ex.Message);
+                MessageBox.Show(ex.Message, "Application Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             #endregion
         }
@@ -337,10 +360,12 @@ namespace GroupProject
                     break;
                 case ApplicationState.CreatingNewInvoice:
                     btnEditInvoice.IsEnabled = false;
+                    btnAddLineItem.Content = "Add Item";
                     break;
                 case ApplicationState.EditingInvoice:
                     grdNewInvoice.IsEnabled = true;
                     btnEditInvoice.IsEnabled = false;
+                    btnAddLineItem.Content = "Add Item";
                     break;
                 case ApplicationState.EditingRow:
                     btnAddLineItem.Content = "Save Row";

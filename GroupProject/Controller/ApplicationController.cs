@@ -14,9 +14,34 @@ namespace GroupProject.Controller
         // Contains the current list of items
         public int CurrentInvoiceId { get; set; }
 
-        public ApplicationState AppState;
-
+        public ApplicationState AppState { get; set; }
         public ApplicationState PreviousState { get; set; }
+
+        public int SearchInvoiceNumber { get; set; }
+
+        public ApplicationController()
+        {
+            AppState = ApplicationState.Default;
+        }
+        public void UpdateAppState(ApplicationState newState)
+        {
+            PreviousState = AppState;
+            AppState = newState;
+        }
+
+        public void RevertState()
+        {
+            if (PreviousState != null)
+            {
+                ApplicationState temp = AppState;
+                AppState = PreviousState;
+                PreviousState = temp;
+            } 
+        }
+
+
+
+
 
     }
 }
