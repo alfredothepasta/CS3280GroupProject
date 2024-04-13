@@ -15,6 +15,8 @@ namespace GroupProject.Main
         [Display(Name = "Item Name")]
         public string ItemName { get; set; }
 
+        public string ItemCode { get; set; }
+
         [Display(Name = "Quantity")]
         public int? Quantity { get; set; }
 

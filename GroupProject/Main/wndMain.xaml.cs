@@ -102,19 +102,26 @@ namespace GroupProject
             try
             {
                 #region Method Code
-                if(_logic.AppState == ApplicationState.CreatingNewInvoice)
+                switch (_controller.AppState)
                 {
-                    if (checkIfUnsaved())
-                    {
+                    case ApplicationState.Default:
+                        break;
+                    case ApplicationState.CreatingNewInvoice:
+                        if (checkIfUnsaved())
+                        {
+                            clearCurrentInvoice();
+                        };
+                        break;
+                    case ApplicationState.InvoiceCreated:
                         clearCurrentInvoice();
-                    };                    
-                } else if (_logic.AppState != ApplicationState.Default)
-                {
-                    throw new Exception("We are in a state that shouldn't allow this");
+                        grdNewInvoice.IsEnabled = true;
+                        break;
+                    default:
+                        throw new Exception("We are in a state that shouldn't allow this");
                 }
 
                 // create a new invoice object
-                _logic.AppState = ApplicationState.CreatingNewInvoice;
+                _controller.AppState = ApplicationState.CreatingNewInvoice;
                 grdNewInvoice.Visibility = Visibility.Visible;
 
 
@@ -131,13 +138,18 @@ namespace GroupProject
         private bool checkIfUnsaved()
         {
             // todo : create dialog asking user if they want to clear any unsaved changes
+            if(_controller.CurrentInvoiceId == null)
+            {
+                return false;
+            }
             return true;
-            throw new NotImplementedException();
         }
 
         private void clearCurrentInvoice()
         {
-            
+            _controller = new ApplicationController();
+            tbxInvoiceNumber.Text = string.Empty;
+            dpDateSelection.Text = string.Empty;
             _mainViewModel.Data.Clear();
             dgrdInvoiceItems.Items.Refresh();
         }
@@ -200,6 +212,7 @@ namespace GroupProject
 
             DataDisplayItem displayItem = new DataDisplayItem()
             {
+                ItemCode = currentItem.ItemCode,
                 ItemName = currentItem.ItemDesc,
                 Quantity = iudItemQuantity.Value,
                 ItemCost = currentItem.Cost,
@@ -231,12 +244,48 @@ namespace GroupProject
                 return;
             }
 
-            int invoiceNum = _logic.createNewInvoice(dpDateSelection.SelectedDate, _mainViewModel.TotalCost);
+            _controller.CurrentInvoiceId = _logic.createNewInvoice(dpDateSelection.SelectedDate, _mainViewModel.TotalCost, _mainViewModel.Data);
 
-            tbxInvoiceNumber.Text = invoiceNum.ToString();
+            tbxInvoiceNumber.Text = _controller.CurrentInvoiceId.ToString();
+
+            _controller.AppState = ApplicationState.InvoiceCreated;
+            applicationStateChange();
 
             lblSubmitError.Visibility = Visibility.Collapsed;
-            _logic.AppState = ApplicationState.Default;
+        }
+
+        /// <summary>
+        /// Handles how the buttons should be displayed if the application state changes
+        /// </summary>
+        private void applicationStateChange()
+        {
+            switch (_controller.AppState)
+            {
+                case ApplicationState.InvoiceCreated:
+                    grdNewInvoice.IsEnabled = false;
+                    btnEditInvoice.IsEnabled = true;
+                    break;
+                case ApplicationState.CreatingNewInvoice:
+                    btnEditInvoice.IsEnabled = false;
+                    break;
+                case ApplicationState.EditingInvoice:
+                    grdNewInvoice.IsEnabled = true;
+                    btnEditInvoice.IsEnabled = false;
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// Handles how the button click for the edit invoice works. 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void btnEditInvoice_Click(object sender, RoutedEventArgs e)
+        {
+            if(_controller.AppState == ApplicationState.InvoiceCreated)
+            {
+                
+            }
         }
     }
 }

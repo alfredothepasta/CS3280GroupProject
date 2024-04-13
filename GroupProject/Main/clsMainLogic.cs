@@ -13,10 +13,10 @@ using System.Threading.Tasks;
 
 namespace GroupProject.Main
 {
-   internal class clsMainLogic
+    internal class clsMainLogic
     {
 
-        public ApplicationState AppState;
+
 
         private clsDataAccess _database;
 
@@ -32,7 +32,6 @@ namespace GroupProject.Main
 
         public clsMainLogic()
         {
-            AppState = ApplicationState.Default;
             _database = new clsDataAccess();
             _itemsSQL = new clsItemsSQL();
         }
@@ -45,9 +44,9 @@ namespace GroupProject.Main
             string sSql = _itemsSQL.GetAllItems();
             DataSet itemsList = _database.ExecuteSQLStatement(sSql, ref returnedItems);
 
-            foreach(DataTable dt in itemsList.Tables)
+            foreach (DataTable dt in itemsList.Tables)
             {
-                foreach(DataRow dr in dt.Rows)
+                foreach (DataRow dr in dt.Rows)
                 {
                     Item item = new Item()
                     {
@@ -62,7 +61,7 @@ namespace GroupProject.Main
             return list;
         }
 
-        public int createNewInvoice(DateTime? _invoiceDate, decimal _totalCost)
+        public int createNewInvoice(DateTime? _invoiceDate, decimal _totalCost, List<DataDisplayItem> displayItems)
         {
             try
             {
@@ -71,7 +70,7 @@ namespace GroupProject.Main
 
                 Invoice invoice = new Invoice()
                 {
-                    InvoiceDate = (DateTime) _invoiceDate,
+                    InvoiceDate = (DateTime)_invoiceDate,
                     TotalCost = _totalCost
                 };
 
@@ -81,6 +80,8 @@ namespace GroupProject.Main
                 sSql = ClsMainSQL.GetLatestInvoice();
                 var ds = _database.ExecuteScalarSQL(sSql);
 
+                
+
                 try
                 {
                     invoiceNum = Int32.Parse(ds);
@@ -89,6 +90,21 @@ namespace GroupProject.Main
                 {
                     throw new Exception("Something went wrong.");
                 }
+
+                List<LineItem> items = new List<LineItem>();
+                for (int iDataIndex = 0; iDataIndex < displayItems.Count; iDataIndex++)
+                {
+                    LineItem newLineItem = new LineItem()
+                    {
+                        InvoiceNum = invoiceNum,
+                        LineItemNum = iDataIndex + 1,
+                        ItemCode = displayItems[iDataIndex].ItemCode,
+                        Quantity = displayItems[iDataIndex].Quantity
+                    };
+                    items.Add(newLineItem);
+                }
+                addLineItems(items);
+
 
                 return invoiceNum;
             }
@@ -105,5 +121,26 @@ namespace GroupProject.Main
 
         }
 
+        private void addLineItems(List<LineItem> lineItems)
+        {
+            try
+            {
+                foreach (LineItem lineItem in lineItems)
+                {
+                    string sql = ClsMainSQL.AddLineItem(lineItem);
+                    _database.ExecuteNonQuery(sql);
+                }
+            }
+            #region Default Catch Block
+            catch (Exception ex)
+            {
+                throw new Exception(MethodInfo.GetCurrentMethod().DeclaringType.Name +
+                    "." +
+                    MethodInfo.GetCurrentMethod().Name +
+                    " -> " +
+                    ex.Message);
+            }
+            #endregion
+        }
     }
 }

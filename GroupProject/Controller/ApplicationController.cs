@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GroupProject.Enum;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,9 +12,9 @@ namespace GroupProject.Controller
         // Class that contains data to be passed between windows
         // Contains logic that requires interaction from multiple windows
         // Contains the current list of items
+        public int CurrentInvoiceId { get; set; }
 
-
-        
+        public ApplicationState AppState;
 
     }
 }
