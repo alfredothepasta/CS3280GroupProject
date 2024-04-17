@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:GroupProject.Items"
         mc:Ignorable="d"
         Title="wndItems" Height="450" Width="800">
-    <Grid>
+    <Grid Background="#FFAED8EB">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="39*"/>
             <ColumnDefinition Width="61*"/>
@@ -15,14 +15,17 @@
             <RowDefinition Height="307*"/>
             <RowDefinition Height="127*"/>
         </Grid.RowDefinitions>
-        <Label x:Name="lblCode" Content="Code:" HorizontalAlignment="Left" Margin="39,57,0,0" VerticalAlignment="Top" FontSize="18"/>
-        <Label x:Name="lblCost" Content="Cost:" HorizontalAlignment="Left" Margin="39,113,0,0" VerticalAlignment="Top" FontSize="18"/>
-        <Label x:Name="lblDescription" Content="Description:" HorizontalAlignment="Left" Margin="39,154,0,0" VerticalAlignment="Top" FontSize="18"/>
-        <Button x:Name="cmdAddItem" Content="Add Item" HorizontalAlignment="Left" Margin="20,27,0,0" Grid.Row="1" VerticalAlignment="Top" Click="cmdAddItem_Click"/>
-        <Button x:Name="cmdEditItem" Content="Edit Item" HorizontalAlignment="Left" Margin="115,27,0,0" Grid.Row="1" VerticalAlignment="Top" Click="cmdEditItem_Click"/>
-        <Button x:Name="cmdDeleteItem" Content="Delete Item" HorizontalAlignment="Left" Margin="216,27,0,0" Grid.Row="1" VerticalAlignment="Top" Click="cmdDeleteItem_Click"/>
-        <DataGrid Grid.Column="1" d:ItemsSource="{d:SampleData ItemCount=5}"/>
-        <Button x:Name="cmdSaveItem" Content="Save Item" HorizontalAlignment="Left" Margin="115,64,0,0" Grid.Row="1" VerticalAlignment="Top" Click="cmdSaveItem_Click"/>
+        <Label x:Name="lblCode" Content="Code:" HorizontalAlignment="Left" Margin="75,107,0,0" VerticalAlignment="Top" FontSize="16"/>
+        <Label x:Name="lblCost" Content="Cost:" HorizontalAlignment="Left" Margin="78,146,0,0" VerticalAlignment="Top" FontSize="16"/>
+        <Label x:Name="lblDescription" Content="Description:" HorizontalAlignment="Left" Margin="26,180,0,0" VerticalAlignment="Top" FontSize="16"/>
+        <Button x:Name="cmdAddItem" Content="Add Item" HorizontalAlignment="Left" Margin="15,27,0,0" Grid.Row="1" VerticalAlignment="Top" Click="cmdAddItem_Click" Height="49" Width="84" BorderBrush="#FF90F06E" Background="#FF90F06E"/>
+        <Button x:Name="cmdEditItem" Content="Edit Item" HorizontalAlignment="Center" Margin="0,27,0,0" Grid.Row="1" VerticalAlignment="Top" Click="cmdEditItem_Click" Height="49" Width="86" Background="#FF6394EE" BorderBrush="#FF6394EE"/>
+        <Button x:Name="cmdDeleteItem" Content="Delete Item" HorizontalAlignment="Left" Margin="214,27,0,0" Grid.Row="1" VerticalAlignment="Top" Click="cmdDeleteItem_Click" Height="49" Width="84" Background="#FFF05454" BorderBrush="#FFF05454"/>
+        <DataGrid x:Name="dgItems" Grid.Column="1" d:ItemsSource="{d:SampleData ItemCount=5}" SelectionChanged="dgItems_SelectionChanged" Background="#FFD6E1F3" CanUserAddRows="False" Margin="128,0,0,0"/>
+        <TextBox x:Name="txtCode" IsReadOnly="True" HorizontalAlignment="Left" Margin="136,114,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+        <TextBox x:Name="txtCost" IsReadOnly="True" HorizontalAlignment="Left" Margin="137,154,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+        <TextBox x:Name="txtDescription" IsReadOnly="True" HorizontalAlignment="Left" Margin="137,187,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+        <Label x:Name="lblItems" Content="Items" HorizontalAlignment="Center" Margin="0,28,0,0" VerticalAlignment="Top" FontSize="24" FontWeight="Bold"/>
 
 
     </Grid>
