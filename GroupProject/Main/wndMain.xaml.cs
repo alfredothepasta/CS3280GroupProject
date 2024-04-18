@@ -133,11 +133,8 @@ namespace GroupProject
                         grdNewInvoice.IsEnabled = true;
                         break;
                     case ApplicationState.CreatingNewInvoice:
-                        if (checkIfUnsaved())
-                        {
-                            grdNewInvoice.IsEnabled = true;
-                            clearCurrentInvoice();
-                        };
+                        grdNewInvoice.IsEnabled = true;
+                        clearCurrentInvoice();
                         break;
                     case ApplicationState.ViewingInvoice:
                         clearCurrentInvoice();
@@ -323,13 +320,21 @@ namespace GroupProject
                 int dataIndex = dgrdInvoiceItems.SelectedIndex;
                 try
                 {
-                    _mainViewModel.Data.RemoveAt(dataIndex);
-                    applicationStateChange();
-
-                    dgrdInvoiceItems.Items.Refresh();
+                    if(_controller.AppState == ApplicationState.EditingRow)
+                    {
+                        throw new Exception();
+                    } else
+                    {
+                        _mainViewModel.Data.RemoveAt(dataIndex);
+                        FinalizeGridChanges();
+                    }
                 }
                 catch
                 {
+                    if(_controller.AppState == ApplicationState.EditingRow)
+                    {
+                        throw new Exception("Please finish editing the current row before deleting a row.");
+                    }
                     throw new Exception("A valid line item must be selected.");
                 }
             }
@@ -345,7 +350,17 @@ namespace GroupProject
         {
             try
             {
-                clearCurrentInvoice();
+                string messageBoxText = "Canceling will discard unsaved changes.";
+                string caption = "Save Warning";
+                MessageBoxButton button = MessageBoxButton.OKCancel;
+                MessageBoxImage icon = MessageBoxImage.Warning;
+                MessageBoxResult result;
+
+                result = MessageBox.Show(messageBoxText, caption, button, icon);
+                
+                if (result == MessageBoxResult.OK) {
+                    clearCurrentInvoice();
+                }
             }
             #region Top Level Catch Block
             catch (Exception ex)
@@ -432,15 +447,6 @@ namespace GroupProject
         #endregion
 
         #region Helper Methods
-        private bool checkIfUnsaved()
-        {
-            // todo : create dialog asking user if they want to clear any unsaved changes
-            if(_controller.CurrentInvoiceId == null)
-            {
-                return false;
-            }
-            return true;
-        }
 
         private void clearCurrentInvoice()
         {
@@ -465,9 +471,7 @@ namespace GroupProject
                     MenuItemInvoiceEdit.IsEnabled = true;
                     MenuItemNewInvoice.IsEnabled = true;
 
-                    btnNewInvoice.IsEnabled = true;
                     grdNewInvoice.IsEnabled = false;
-                    btnEditInvoice.IsEnabled = true;
                     break;
                 case ApplicationState.CreatingNewInvoice:
                     MenuItemEditItems.IsEnabled = false;
@@ -475,9 +479,8 @@ namespace GroupProject
                     MenuItemInvoiceEdit.IsEnabled = false;
                     MenuItemNewInvoice.IsEnabled = false;
 
-                    btnNewInvoice.IsEnabled = false;
+                    btnDeleteRow.IsEnabled = true;
                     btnSubmitInvoice.Content = "Submit Invoice";
-                    btnEditInvoice.IsEnabled = false;
                     btnAddLineItem.Content = "Add Item";
                     break;
                 case ApplicationState.EditingInvoice:
@@ -486,10 +489,9 @@ namespace GroupProject
                     MenuItemInvoiceEdit.IsEnabled = false;
                     MenuItemNewInvoice.IsEnabled = false;
 
-                    btnNewInvoice.IsEnabled = false;
+                    btnDeleteRow.IsEnabled = true;
                     btnSubmitInvoice.Content = "Save Changes";
                     grdNewInvoice.IsEnabled = true;
-                    btnEditInvoice.IsEnabled = false;
                     btnAddLineItem.Content = "Add Item";
                     break;
                 case ApplicationState.EditingRow:
@@ -498,18 +500,17 @@ namespace GroupProject
                     MenuItemInvoiceEdit.IsEnabled = false;
                     MenuItemNewInvoice.IsEnabled = false;
 
-                    btnNewInvoice.IsEnabled = false;
+                    btnDeleteRow.IsEnabled = false;
                     btnAddLineItem.Content = "Save Row";
                     break;
                 case ApplicationState.Default:
                     MenuItemEditItems.IsEnabled = true;
                     MenuItemSearch.IsEnabled = true;
-                    MenuItemInvoiceEdit.IsEnabled = true;
+                    MenuItemInvoiceEdit.IsEnabled = false;
                     MenuItemNewInvoice.IsEnabled = true;
 
-                    btnNewInvoice.IsEnabled = true;
+
                     grdNewInvoice.IsEnabled = false;
-                    btnEditInvoice.IsEnabled = true;
 
                     grdNewInvoice.IsEnabled = false;
                     break;

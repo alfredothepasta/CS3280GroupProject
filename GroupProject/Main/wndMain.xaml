@@ -19,7 +19,7 @@
         <Menu Background="LightGray" Grid.Row="0" Padding="5" FontWeight="Bold">
             <MenuItem Header="_Invoice Options">
                 <MenuItem Name="MenuItemNewInvoice" Header="_New" Click="btnNewInvoice_Click"/>
-                <MenuItem Name="MenuItemInvoiceEdit" Header="_Edit" />
+                <MenuItem Name="MenuItemInvoiceEdit" Header="_Edit" Click="btnEditInvoice_Click" IsEnabled="False" />
                 <MenuItem Name="MenuItemSearch" Header="_Search" Click="OpenSearchWindow"/>
                 <MenuItem Name="MenuItemEditItems" Header="_Edit Items" Click="OpenEditWindow" />
             </MenuItem>
@@ -90,10 +90,6 @@
             -->
         </GroupBox>
 
-        <StackPanel Orientation="Horizontal" Grid.Row="3" VerticalAlignment="Bottom" >
-            <Button Name="btnNewInvoice" Content="New Invoice" Padding="5" Margin="10" FontSize="16" Click="btnNewInvoice_Click"/>
-            <Button Name="btnEditInvoice" Content="Edit Invoice" IsEnabled="False" Padding="5" Margin="10" FontSize="16" Click="btnEditInvoice_Click"/>
-        </StackPanel>
 
     </Grid>
 </Window>
