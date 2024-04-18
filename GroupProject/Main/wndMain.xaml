@@ -18,13 +18,13 @@
         
         <Menu Background="LightGray" Grid.Row="0" Padding="5" FontWeight="Bold">
             <MenuItem Header="_Invoice Options">
-                <MenuItem Header="_New" Click="btnNewInvoice_Click"/>
-                <MenuItem Header="_Edit" />
-                <MenuItem Header="_Search" Click="OpenSearchWindow"/>
-                <MenuItem Header="_Edit Items" Click="OpenEditWindow" />
+                <MenuItem Name="MenuItemNewInvoice" Header="_New" Click="btnNewInvoice_Click"/>
+                <MenuItem Name="MenuItemInvoiceEdit" Header="_Edit" />
+                <MenuItem Name="MenuItemSearch" Header="_Search" Click="OpenSearchWindow"/>
+                <MenuItem Name="MenuItemEditItems" Header="_Edit Items" Click="OpenEditWindow" />
             </MenuItem>
         </Menu>
-        <GroupBox Name="grdNewInvoice" Grid.Row="1" Header="New Invoice" >
+        <GroupBox Name="grdNewInvoice" Grid.Row="1" Header="New Invoice" IsEnabled="False">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="auto" />
@@ -73,9 +73,10 @@
                 <Button Name="btnAddLineItem" Content="Add Item" IsDefault="True" Grid.Row="3" Grid.Column="4" Margin="2" Click="btnAddLineItem_Click" IsEnabled="False" />
 
                 <DatePicker Name="dpDateSelection" Margin="0,5,0,0" Grid.Row="4" Grid.Column="0"></DatePicker>
-                <Label Content="Grand Total:" Grid.Row="4" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right" />
-                <Label Name="lblTotal" Content="{Binding TotalCost}" Grid.Row="4" Grid.Column="3" VerticalAlignment="Center" ContentStringFormat="C" />
-                <Button Name="btnSubmitInvoice" Margin="2" Grid.Row="4" Grid.Column="4" Content="Submit Invoice" VerticalAlignment="Top" Click="btnSubmitInvoice_Click" />
+                <Label Content="Grand Total:" Grid.Row="4" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Right" />
+                <Label Name="lblTotal" Content="{Binding TotalCost}" Grid.Row="4" Grid.Column="2" VerticalAlignment="Center" ContentStringFormat="C" />
+                <Button x:Name="btnCancel" Content="Cancel" Margin="2" Grid.Row="4" Grid.Column="3" VerticalAlignment="Center" Click="btnCancel_Click" />
+                <Button Name="btnSubmitInvoice" Margin="2" Grid.Row="4" Grid.Column="4" Content="Submit Invoice" VerticalAlignment="Center" Click="btnSubmitInvoice_Click" />
 
                 <Label Foreground="Red" Visibility="Collapsed" Grid.Row="5" Content="" Name="lblSubmitError"/>
             </Grid>

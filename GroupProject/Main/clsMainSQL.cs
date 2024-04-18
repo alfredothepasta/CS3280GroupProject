@@ -13,7 +13,7 @@ namespace GroupProject.Main
     internal class ClsMainSQL
     {
 
-        public static string UpdateInvoices(int invoiceTotal, int invoiceId)
+        public static string UpdateInvoices(decimal invoiceTotal, int invoiceId)
         {
             try
             {
@@ -113,6 +113,27 @@ namespace GroupProject.Main
             #endregion
         }
 
+        public static string GetDisplayItemsByInvoiceId(int invoiceId)
+        {
+            try
+            {
+                return $"SELECT ItemDesc.ItemCode, ItemDesc, Cost, Quantity " +
+                    $"FROM lineItems " +
+                    $"INNER JOIN ItemDesc ON lineItems.ItemCode = ItemDesc.ItemCode " +
+                    $"WHERE InvoiceNum = {invoiceId}";
+            }
+            #region Default Catch Block
+            catch (Exception ex)
+            {
+                throw new Exception(MethodInfo.GetCurrentMethod().DeclaringType.Name +
+                    "." +
+                    MethodInfo.GetCurrentMethod().Name +
+                    " -> " +
+                    ex.Message);
+            }
+            #endregion
+        }
+
         public static string GetItemsByItemAndInvoiceId(string itemCode, int invoiceId)
         {
             try
@@ -136,7 +157,26 @@ namespace GroupProject.Main
             #endregion
         }
 
-        public static string DeleteInvoice(int invoiceId)
+        public static string UpdateLineItem(LineItem lineItem)
+        {
+            try {
+                return $"UPDATE LineItems " +
+                    $"SET ItemCode = {lineItem.ItemCode}, Quantity = {lineItem.Quantity}" +
+                    $"WHERE InvoiceNum = {lineItem.InvoiceNum} AND ItemCode = {lineItem.LineItemNum}";
+            }
+            #region Default Catch Block
+            catch (Exception ex)
+            {
+                throw new Exception(MethodInfo.GetCurrentMethod().DeclaringType.Name +
+                    "." +
+                    MethodInfo.GetCurrentMethod().Name +
+                    " -> " +
+                    ex.Message);
+            }
+            #endregion
+        }
+
+        public static string DeleteLineItems(int invoiceId)
         {
             try
             {

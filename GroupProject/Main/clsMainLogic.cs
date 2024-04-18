@@ -91,19 +91,8 @@ namespace GroupProject.Main
                     throw new Exception(e.Message);
                 }
 
-                List<LineItem> items = new List<LineItem>();
-                for (int iDataIndex = 0; iDataIndex < displayItems.Count; iDataIndex++)
-                {
-                    LineItem newLineItem = new LineItem()
-                    {
-                        InvoiceNum = invoiceNum,
-                        LineItemNum = iDataIndex + 1,
-                        ItemCode = displayItems[iDataIndex].ItemCode,
-                        Quantity = displayItems[iDataIndex].Quantity
-                    };
-                    items.Add(newLineItem);
-                }
-                addLineItems(items);
+                
+                addLineItems(displayItems, invoiceNum);
 
 
                 return invoiceNum;
@@ -121,15 +110,30 @@ namespace GroupProject.Main
 
         }
 
-        private void addLineItems(List<LineItem> lineItems)
+        private void addLineItems(List<DataDisplayItem> displayItems, int invoiceNum)
         {
             try
             {
+                List<LineItem> lineItems = new List<LineItem>();
+                for (int iDataIndex = 0; iDataIndex < displayItems.Count; iDataIndex++)
+                {
+                    LineItem newLineItem = new LineItem()
+                    {
+                        InvoiceNum = invoiceNum,
+                        LineItemNum = iDataIndex + 1,
+                        ItemCode = displayItems[iDataIndex].ItemCode,
+                        Quantity = displayItems[iDataIndex].Quantity
+                    };
+                    lineItems.Add(newLineItem);
+                }
+
                 foreach (LineItem lineItem in lineItems)
                 {
                     string sql = ClsMainSQL.AddLineItem(lineItem);
                     _database.ExecuteNonQuery(sql);
                 }
+
+
             }
             #region Default Catch Block
             catch (Exception ex)
@@ -141,6 +145,53 @@ namespace GroupProject.Main
                     ex.Message);
             }
             #endregion
+        }
+
+        public List<DataDisplayItem> getInvoiceList(int invoiceId)
+        {
+            int retVal = 0;
+            string sSql = ClsMainSQL.GetDisplayItemsByInvoiceId(invoiceId);
+            DataSet lineItems = _database.ExecuteSQLStatement(sSql, ref retVal);
+            DataTable table = lineItems.Tables[0];
+            List<DataDisplayItem> returnList = new List<DataDisplayItem>();
+            foreach(DataRow row in table.Rows)
+            {
+                DataDisplayItem item = new DataDisplayItem()
+                {
+                    ItemCode = (string)row.ItemArray[0],
+                    ItemName = (string)row.ItemArray[1],
+                    ItemCost = (decimal)row.ItemArray[2],
+                    Quantity = (int)row.ItemArray[3],
+
+                };
+                item.TotalCost = (decimal) item.ItemCost * (decimal) item.Quantity;
+
+                returnList.Add(item);
+
+            }
+
+            return returnList;
+        }
+
+        public DateTime GetInvoiceDate(int currentInvoiceId)
+        {
+            int retVal = 0;
+            string sSql = ClsMainSQL.GetInvoiceById(currentInvoiceId);
+            DataSet invoiceDb = _database.ExecuteSQLStatement(sSql, ref retVal);
+            DateTime returnDate = (DateTime) invoiceDb.Tables[0].Rows[0].ItemArray[1];
+
+            return returnDate;
+        }
+
+        internal void UpdateInvoice(int currentInvoiceId, decimal totalCost, List<DataDisplayItem> displayItems)
+        {
+            string sSql = ClsMainSQL.DeleteLineItems(currentInvoiceId);
+            _database.ExecuteNonQuery(sSql);
+
+            sSql = ClsMainSQL.UpdateInvoices(totalCost, currentInvoiceId);
+            _database.ExecuteNonQuery(sSql);
+
+            addLineItems(displayItems, currentInvoiceId);
         }
     }
 }
