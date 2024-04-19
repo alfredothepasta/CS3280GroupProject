@@ -10,7 +10,7 @@ namespace GroupProject.Enum
     {
         Default,
         CreatingNewInvoice,
-        InvoiceCreated,
+        ViewingInvoice,
         EditingInvoice,
         EditingRow,
         SearchingInvoice,

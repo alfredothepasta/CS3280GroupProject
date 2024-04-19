@@ -25,5 +25,12 @@ namespace GroupProject.Main
 
         [Display(Name = "Total Cost")]
         public decimal TotalCost { get; set; }
+
+        public override bool Equals(object? obj)
+        {
+            var item = obj as DataDisplayItem;
+            if (item == null) return false;
+            return this.ItemCode == item.ItemCode;
+        }
     }
 }
