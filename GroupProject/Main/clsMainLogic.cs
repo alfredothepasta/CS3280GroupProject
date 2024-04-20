@@ -15,52 +15,90 @@ namespace GroupProject.Main
 {
     internal class clsMainLogic
     {
-
-
-
+        /// <summary>
+        /// The object for accessing the database
+        /// </summary>
         private clsDataAccess _database;
 
+        /// <summary>
+        /// Holds the sql for items
+        /// </summary>
         private clsItemsSQL _itemsSQL;
 
-        private List<LineItem> _lineItems;
-        // if we're getting a search invoice we'll grab that from the application controller
-        // Create a list of the invoice items (I will be making data classes for this)
-        // have methods to add to a new invoice
-        // have a method to enable editing of an invoice
-        // a bunch of other stuff that I won't think of until I'm actually implenting things
-        // honestly I'm really bad at engineering a solution before I write the code
-
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <exception cref="Exception"></exception>
         public clsMainLogic()
         {
-            _database = new clsDataAccess();
-            _itemsSQL = new clsItemsSQL();
+            try
+            {
+                _database = new clsDataAccess();
+                _itemsSQL = new clsItemsSQL();
+            }
+            #region Default Catch Block
+            catch (Exception ex)
+            {
+                throw new Exception(MethodInfo.GetCurrentMethod().DeclaringType.Name +
+                    "." +
+                    MethodInfo.GetCurrentMethod().Name +
+                    " -> " +
+                    ex.Message);
+            }
+            #endregion
         }
 
+        /// <summary>
+        /// Gets the list of items
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         public List<Item> getItemList()
         {
-            List<Item> list = new List<Item>();
-
-            int returnedItems = 0;
-            string sSql = _itemsSQL.GetAllItems();
-            DataSet itemsList = _database.ExecuteSQLStatement(sSql, ref returnedItems);
-
-            foreach (DataTable dt in itemsList.Tables)
+            try
             {
-                foreach (DataRow dr in dt.Rows)
-                {
-                    Item item = new Item()
-                    {
-                        ItemCode = (string)dr[0],
-                        ItemDesc = (string)dr[1],
-                        Cost = (decimal)dr[2],
-                    };
-                    list.Add(item);
-                }
-            }
+                List<Item> list = new List<Item>();
 
-            return list;
+                int returnedItems = 0;
+                string sSql = _itemsSQL.GetAllItems();
+                DataSet itemsList = _database.ExecuteSQLStatement(sSql, ref returnedItems);
+
+                foreach (DataTable dt in itemsList.Tables)
+                {
+                    foreach (DataRow dr in dt.Rows)
+                    {
+                        Item item = new Item()
+                        {
+                            ItemCode = (string)dr[0],
+                            ItemDesc = (string)dr[1],
+                            Cost = (decimal)dr[2],
+                        };
+                        list.Add(item);
+                    }
+                }
+
+                return list;
+            }
+            #region Default Catch Block
+            catch (Exception ex)
+            {
+                throw new Exception(MethodInfo.GetCurrentMethod().DeclaringType.Name +
+                    "." +
+                    MethodInfo.GetCurrentMethod().Name +
+                    " -> " +
+                    ex.Message);
+            }
+            #endregion
         }
 
+        /// <summary>
+        /// Creates a new invoice from the given inputs
+        /// </summary>
+        /// <param name="_invoiceDate"></param>
+        /// <param name="_totalCost"></param>
+        /// <param name="displayItems"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         public int createNewInvoice(DateTime? _invoiceDate, decimal _totalCost, List<DataDisplayItem> displayItems)
         {
             try
@@ -110,6 +148,12 @@ namespace GroupProject.Main
 
         }
 
+        /// <summary>
+        /// Adds line items 
+        /// </summary>
+        /// <param name="displayItems"></param>
+        /// <param name="invoiceNum"></param>
+        /// <exception cref="Exception"></exception>
         private void addLineItems(List<DataDisplayItem> displayItems, int invoiceNum)
         {
             try
@@ -147,51 +191,141 @@ namespace GroupProject.Main
             #endregion
         }
 
-        public List<DataDisplayItem> getInvoiceList(int invoiceId)
+        /// <summary>
+        /// gets the itmes listed in an invoice
+        /// </summary>
+        /// <param name="invoiceId"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        public List<DataDisplayItem> getInvoiceItemList(int invoiceId)
         {
-            int retVal = 0;
-            string sSql = ClsMainSQL.GetDisplayItemsByInvoiceId(invoiceId);
-            DataSet lineItems = _database.ExecuteSQLStatement(sSql, ref retVal);
-            DataTable table = lineItems.Tables[0];
-            List<DataDisplayItem> returnList = new List<DataDisplayItem>();
-            foreach(DataRow row in table.Rows)
+            try
             {
-                DataDisplayItem item = new DataDisplayItem()
+                int retVal = 0;
+                string sSql = ClsMainSQL.GetDisplayItemsByInvoiceId(invoiceId);
+                DataSet lineItems = _database.ExecuteSQLStatement(sSql, ref retVal);
+                DataTable table = lineItems.Tables[0];
+                List<DataDisplayItem> returnList = new List<DataDisplayItem>();
+                foreach (DataRow row in table.Rows)
                 {
-                    ItemCode = (string)row.ItemArray[0],
-                    ItemName = (string)row.ItemArray[1],
-                    ItemCost = (decimal)row.ItemArray[2],
-                    Quantity = (int)row.ItemArray[3],
+                    DataDisplayItem item = new DataDisplayItem()
+                    {
+                        ItemCode = (string)row.ItemArray[0],
+                        ItemName = (string)row.ItemArray[1],
+                        ItemCost = (decimal)row.ItemArray[2],
+                        Quantity = (int)row.ItemArray[3],
 
-                };
-                item.TotalCost = (decimal) item.ItemCost * (decimal) item.Quantity;
+                    };
+                    item.TotalCost = (decimal)item.ItemCost * (decimal)item.Quantity;
 
-                returnList.Add(item);
+                    returnList.Add(item);
 
+                }
+
+                return returnList;
             }
-
-            return returnList;
+            #region Default Catch Block
+            catch (Exception ex)
+            {
+                throw new Exception(MethodInfo.GetCurrentMethod().DeclaringType.Name +
+                    "." +
+                    MethodInfo.GetCurrentMethod().Name +
+                    " -> " +
+                    ex.Message);
+            }
+            #endregion
         }
 
-        public DateTime GetInvoiceDate(int currentInvoiceId)
+        /// <summary>
+        /// Gets the date of the invoice
+        /// </summary>
+        /// <param name="invoiceId"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        public DateTime GetInvoiceDate(int invoiceId)
         {
-            int retVal = 0;
-            string sSql = ClsMainSQL.GetInvoiceById(currentInvoiceId);
-            DataSet invoiceDb = _database.ExecuteSQLStatement(sSql, ref retVal);
-            DateTime returnDate = (DateTime) invoiceDb.Tables[0].Rows[0].ItemArray[1];
+            try
+            {
+                int retVal = 0;
+                string sSql = ClsMainSQL.GetInvoiceById(invoiceId);
+                DataSet invoiceDb = _database.ExecuteSQLStatement(sSql, ref retVal);
+                DateTime returnDate = (DateTime)invoiceDb.Tables[0].Rows[0].ItemArray[1];
 
-            return returnDate;
+                return returnDate;
+            }
+            #region Default Catch Block
+            catch (Exception ex)
+            {
+                throw new Exception(MethodInfo.GetCurrentMethod().DeclaringType.Name +
+                    "." +
+                    MethodInfo.GetCurrentMethod().Name +
+                    " -> " +
+                    ex.Message);
+            }
+            #endregion
         }
 
-        internal void UpdateInvoice(int currentInvoiceId, decimal totalCost, List<DataDisplayItem> displayItems)
+        /// <summary>
+        /// Updates the invoice with the given invoice id
+        /// </summary>
+        /// <param name="invoiceId"></param>
+        /// <param name="totalCost"></param>
+        /// <param name="displayItems"></param>
+        /// <exception cref="Exception"></exception>
+        internal void UpdateInvoice(int invoiceId, decimal totalCost, List<DataDisplayItem> displayItems)
         {
-            string sSql = ClsMainSQL.DeleteLineItems(currentInvoiceId);
-            _database.ExecuteNonQuery(sSql);
+            try
+            {
+                string sSql = ClsMainSQL.DeleteLineItems(invoiceId);
+                _database.ExecuteNonQuery(sSql);
 
-            sSql = ClsMainSQL.UpdateInvoices(totalCost, currentInvoiceId);
-            _database.ExecuteNonQuery(sSql);
+                sSql = ClsMainSQL.UpdateInvoices(totalCost, invoiceId);
+                _database.ExecuteNonQuery(sSql);
 
-            addLineItems(displayItems, currentInvoiceId);
+                addLineItems(displayItems, invoiceId);
+            }
+            #region Default Catch Block
+            catch (Exception ex)
+            {
+                throw new Exception(MethodInfo.GetCurrentMethod().DeclaringType.Name +
+                    "." +
+                    MethodInfo.GetCurrentMethod().Name +
+                    " -> " +
+                    ex.Message);
+            }
+            #endregion
+        }
+
+        /// <summary>
+        /// Updates the data in the view model to match the data in the database
+        /// </summary>
+        /// <param name="mainViewModel"></param>
+        /// <exception cref="Exception"></exception>
+        internal void updateCurrentInvoiceDisplay(MainViewModel mainViewModel)
+        {
+            try
+            {
+                foreach(DataDisplayItem lineItem in mainViewModel.Data)
+                {
+                    Item item = mainViewModel.Items.Where(x => x.ItemCode == lineItem.ItemCode).First();
+
+                    int indexLineItem = mainViewModel.Data.IndexOf(lineItem);
+
+                    mainViewModel.Data[indexLineItem].ItemCost = item.Cost;
+                    mainViewModel.Data[indexLineItem].ItemName = item.ItemDesc;
+                    mainViewModel.Data[indexLineItem].TotalCost = lineItem.ItemCost * (decimal) lineItem.Quantity;
+                }
+            }
+            #region Default Catch Block
+            catch (Exception ex)
+            {
+                throw new Exception(MethodInfo.GetCurrentMethod().DeclaringType.Name +
+                    "." +
+                    MethodInfo.GetCurrentMethod().Name +
+                    " -> " +
+                    ex.Message);
+            }
+            #endregion
         }
     }
 }

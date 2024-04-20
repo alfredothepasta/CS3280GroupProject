@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GroupProject.Main;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -25,5 +26,6 @@ namespace GroupProject
         /// Gets or sets the cost of the item.
         /// </summary>
         public decimal Cost { get; set; }
+
     }
 }

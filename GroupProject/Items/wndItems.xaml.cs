@@ -1,6 +1,7 @@
 ﻿using GroupProject.Controller;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -23,6 +24,7 @@ namespace GroupProject.Items
     {
         private readonly ApplicationController _controller;
         private readonly clsItemsLogic _itemsLogic = new clsItemsLogic();
+        private bool _changesMade = false;
 
         wndAddEditItem wndAddEditItem;
 
@@ -104,6 +106,7 @@ namespace GroupProject.Items
                 wndAddEditItem.ShowDialog();
                 if (wndAddEditItem.SaveClicked == true) // Show the window modally
                 {
+                    _changesMade = true;
                     // Use the entered input
                     _itemsLogic.InsertItem(wndAddEditItem.ItemCode, wndAddEditItem.ItemDescription, wndAddEditItem.ItemCost);
                     PopulateDataGrid();
@@ -136,9 +139,12 @@ namespace GroupProject.Items
 
                     if (wndAddEditItem.SaveClicked == true) // Show the window modally
                     {
+                        _controller.ChangesMadeToItemList = true;
                         // Use the entered input
                         _itemsLogic.UpdateItem(wndAddEditItem.ItemCode, wndAddEditItem.ItemDescription, wndAddEditItem.ItemCost);
                         PopulateDataGrid();
+
+
                     }
                 }
             }

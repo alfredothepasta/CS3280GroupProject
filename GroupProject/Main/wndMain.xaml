@@ -6,7 +6,7 @@
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         xmlns:local="clr-namespace:GroupProject"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="Frank's Fresh Produce" Height="450" Width="800">
     <Grid Margin="0,0,0,-6">
         <Grid.RowDefinitions>
             <RowDefinition Height="auto" />
@@ -45,7 +45,7 @@
 
                 <!--data table that shows what's added to the invoice-->
                 <ScrollViewer Grid.Row="0" Grid.ColumnSpan="5">
-                    <DataGrid Name="dgrdInvoiceItems" ItemsSource="{Binding Data}" AutoGenerateColumns="False" IsReadOnly="True" SelectionChanged="dgrdInvoiceItems_SelectionChanged">
+                    <DataGrid Name="dgrdInvoiceItems" ItemsSource="{Binding Data}" AutoGenerateColumns="False" IsReadOnly="True">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Item Name" Width="*" Binding="{Binding ItemName}" IsReadOnly="True"/>
                             <DataGridTextColumn Header="Item Cost" Width="*" Binding="{Binding ItemCost, StringFormat=C}" IsReadOnly="True"/>

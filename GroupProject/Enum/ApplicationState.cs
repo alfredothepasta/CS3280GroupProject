@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace GroupProject.Enum
 {
+    /// <summary>
+    /// holds the states of the application
+    /// </summary>
     public enum ApplicationState
     {
         Default,

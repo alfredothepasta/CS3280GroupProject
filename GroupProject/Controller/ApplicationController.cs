@@ -17,11 +17,14 @@ namespace GroupProject.Controller
         public ApplicationState AppState { get; set; }
         public ApplicationState PreviousState { get; set; }
 
+        public bool ChangesMadeToItemList { get; set; }
+
         public int SearchInvoiceNumber { get; set; }
 
         public ApplicationController()
         {
             AppState = ApplicationState.Default;
+            ChangesMadeToItemList = false;
         }
         public void UpdateAppState(ApplicationState newState)
         {

@@ -13,6 +13,13 @@ namespace GroupProject.Main
     internal class ClsMainSQL
     {
 
+        /// <summary>
+        /// The sql for updating an invoice
+        /// </summary>
+        /// <param name="invoiceTotal"></param>
+        /// <param name="invoiceId"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         public static string UpdateInvoices(decimal invoiceTotal, int invoiceId)
         {
             try
@@ -33,6 +40,12 @@ namespace GroupProject.Main
             #endregion
         }
 
+        /// <summary>
+        /// The sql for adding a line item
+        /// </summary>
+        /// <param name="lineItem"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         public static string AddLineItem(LineItem lineItem)
         {
             try
@@ -53,6 +66,12 @@ namespace GroupProject.Main
             #endregion
         }
 
+        /// <summary>
+        /// the sql for creating a new invoice
+        /// </summary>
+        /// <param name="invoice"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         public static string AddInvoice(Invoice invoice)
         {
             try
@@ -73,6 +92,12 @@ namespace GroupProject.Main
             #endregion
         }
 
+        /// <summary>
+        /// the sql to get invoice by id
+        /// </summary>
+        /// <param name="invoiceId"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         public static string GetInvoiceById(int invoiceId)
         {
             try
@@ -93,6 +118,11 @@ namespace GroupProject.Main
             #endregion
         }
 
+        /// <summary>
+        /// the sql to get items
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         public static string GetItems()
         {
             try
@@ -113,6 +143,12 @@ namespace GroupProject.Main
             #endregion
         }
 
+        /// <summary>
+        /// the sql to get display items by invoice id
+        /// </summary>
+        /// <param name="invoiceId"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         public static string GetDisplayItemsByInvoiceId(int invoiceId)
         {
             try
@@ -134,6 +170,13 @@ namespace GroupProject.Main
             #endregion
         }
 
+        /// <summary>
+        /// the sql that gets items by item and invoice id
+        /// </summary>
+        /// <param name="itemCode"></param>
+        /// <param name="invoiceId"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         public static string GetItemsByItemAndInvoiceId(string itemCode, int invoiceId)
         {
             try
@@ -157,6 +200,12 @@ namespace GroupProject.Main
             #endregion
         }
 
+        /// <summary>
+        /// Updates a line item
+        /// </summary>
+        /// <param name="lineItem"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         public static string UpdateLineItem(LineItem lineItem)
         {
             try {
@@ -176,6 +225,12 @@ namespace GroupProject.Main
             #endregion
         }
 
+        /// <summary>
+        /// Deletes all line items
+        /// </summary>
+        /// <param name="invoiceId"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         public static string DeleteLineItems(int invoiceId)
         {
             try
@@ -196,6 +251,11 @@ namespace GroupProject.Main
             #endregion
         }
 
+        /// <summary>
+        /// Gets the invoice most recently added
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         public static string GetLatestInvoice()
         {
             try

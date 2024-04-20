@@ -21,7 +21,7 @@
         <Button x:Name="cmdAddItem" Content="Add Item" HorizontalAlignment="Left" Margin="15,27,0,0" Grid.Row="1" VerticalAlignment="Top" Click="cmdAddItem_Click" Height="49" Width="84" BorderBrush="#FF90F06E" Background="#FF90F06E"/>
         <Button x:Name="cmdEditItem" Content="Edit Item" HorizontalAlignment="Center" Margin="0,27,0,0" Grid.Row="1" VerticalAlignment="Top" Click="cmdEditItem_Click" Height="49" Width="86" Background="#FF6394EE" BorderBrush="#FF6394EE"/>
         <Button x:Name="cmdDeleteItem" Content="Delete Item" HorizontalAlignment="Left" Margin="214,27,0,0" Grid.Row="1" VerticalAlignment="Top" Click="cmdDeleteItem_Click" Height="49" Width="84" Background="#FFF05454" BorderBrush="#FFF05454"/>
-        <DataGrid x:Name="dgItems" Grid.Column="1" d:ItemsSource="{d:SampleData ItemCount=5}" SelectionChanged="dgItems_SelectionChanged" Background="#FFD6E1F3" CanUserAddRows="False" Margin="128,0,0,0"/>
+        <DataGrid x:Name="dgItems" Grid.Column="1" d:ItemsSource="{d:SampleData ItemCount=5}" SelectionChanged="dgItems_SelectionChanged" Background="#FFD6E1F3" IsReadOnly="True" CanUserAddRows="False" Margin="128,0,0,0"/>
         <TextBox x:Name="txtCode" IsReadOnly="True" HorizontalAlignment="Left" Margin="136,114,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
         <TextBox x:Name="txtCost" IsReadOnly="True" HorizontalAlignment="Left" Margin="137,154,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
         <TextBox x:Name="txtDescription" IsReadOnly="True" HorizontalAlignment="Left" Margin="137,187,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
